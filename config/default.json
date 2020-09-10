@@ -1,0 +1,6 @@
+{
+    "jwtPrivateKey": "unsecureKey",
+    "db": "mongodb://localhost/yelp_camp",
+    "requiresAuth": true
+  }
+  
