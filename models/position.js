@@ -11,16 +11,19 @@ var positionSchema = new mongoose.Schema({
     author: {
         id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
         },
-        userName: String
+        username: String
     },
     trades: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Trade"
+            ref: "Trade",
+            autopopulate: true
         }
     ]
 });
+
+positionSchema.plugin(require('mongoose-autopopulate'));
 
 module.exports = mongoose.model("Position", positionSchema);

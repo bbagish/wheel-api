@@ -1,12 +1,12 @@
-var cookieParser = require('cookie-parser');
 var createError = require('http-errors');
 var express = require('express');
 var logger = require('morgan');
 var cors = require("cors");
-var positionsRoute = require('./routes/positions');
-var tradeRoute = require('./routes/trades');
-const usersRoute = require("./routes/users");
+
 const authRoute = require("./routes/auth");
+const positionsRoute = require('./routes/positions');
+const tradeRoute = require('./routes/trades');
+const usersRoute = require("./routes/users");
 const error = require("./middleware/error");
 
 var app = express();
@@ -17,7 +17,6 @@ require("./startup/db")();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 app.use(cors());
 

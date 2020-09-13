@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     maxlength: 255,
     unique: true
   },
-  userName: {
+  username: {
     type: String,
     required: true,
     minlength: 2,
@@ -31,7 +31,7 @@ userSchema.methods.generateAuthToken = function() {
   const token = jwt.sign(
     {
       _id: this._id,
-      userName: this.userName,
+      username: this.username,
       email: this.email,
       isAdmin: this.isAdmin
     },
@@ -49,7 +49,7 @@ function validateUser(user) {
     .max(255)
     .required()
     .email(),
-  userName: Joi.string()
+  username: Joi.string()
     .min(2)
     .max(50)
     .required(),

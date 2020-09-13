@@ -1,16 +1,16 @@
-var express = require('express');
-var router = express.Router({ mergeParams: true });
+const express = require('express');
+const router = express.Router({ mergeParams: true });
 const auth = require("../middleware/auth");
 
-var Position = require('../models/position');
-var Trade = require('../models/trade');
+const Position = require('../models/position');
+const Trade = require('../models/trade');
 
 router.post("/", [auth], async (req, res) => {
     const trade = new Trade(req.body);
     await trade.save();
     await Position.findById(req.params.id, async (err, position) => {
-        if(err) {
-            return res.status(404).send({message: 'Position is not found'});
+        if (err) {
+            return res.status(404).send({ msg: 'Position is not found' });
         } else {
             position.trades.push(trade);
             await position.save();
@@ -37,7 +37,7 @@ router.put("/:trade_id", [auth], async (req, res) => {
     if (!trade) {
         return res
             .status(404)
-            .send("The trade with the given ID was not found.");
+            .send({ msg: 'The trade with the given ID was not found.'});
     }
     res.send(trade);
 });
@@ -61,10 +61,10 @@ router.put("/:trade_id/close", [auth], async (req, res) => {
     if (!trade) {
         return res
             .status(404)
-            .send("The trade with the given ID was not found.");
+            .send({msg: 'The trade with the given ID was not found.'});
     }
 
-    await Position.findById(req.params.id).populate("trades").exec(async (err, foundPosition) => {
+    await Position.findById(req.params.id, async (err, foundPosition) => {
         if (err || !foundPosition) {
             res.status(404).json({ msg: 'Position is not found' })
         } else {
@@ -93,12 +93,12 @@ router.delete("/:trade_id", [auth], async (req, res) => {
         return res.status(404).send("The trade with the given ID was not found.");
     }
     // DELETING REFERENCE OF THE TRADE
-    await Position.findById(req.params.id).populate("trades").exec(async (err, position)=> {
-        if(err) {
-            return res.status(404).send({message: 'Position is not found'});
+    Position.findById(req.params.id, async (err, position) => {
+        if (err) {
+            return res.status(404).send({ msg: 'Position is not found' });
         } else {
             position.trades.pull({ _id: req.params.trade_id })
-
+            //TODO: IMPROVE ALSO CREATE A METHOD TO CALCULATE PROFIT
             var arr = [];
             position.trades.forEach(trade => {
                 return arr.push(trade.profit);
