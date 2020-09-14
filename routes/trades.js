@@ -106,7 +106,7 @@ router.delete("/:trade_id", [auth], async (req, res) => {
             var sum = arr.reduce(function (a, b) {
                 return a + b;
             }, 0);
-            position.adjustedCost = position.costBasis - sum;
+            position.adjustedCost = position.costBasis - (sum * 100);
             position.profit = sum;
             await position.save();
 
