@@ -78,7 +78,7 @@ router.put("/:trade_id/close", [auth], async (req, res) => {
 
             //console.log(sum);
             foundPosition.profit = sum;
-            foundPosition.adjustedCost = foundPosition.costBasis - sum;
+            foundPosition.adjustedCost = foundPosition.costBasis - (sum * 100);
             await foundPosition.save();
             res.send(foundPosition);
         }
