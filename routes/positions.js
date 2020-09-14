@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const Position = require('../models/position');
 
-router.get("/:id", [auth], (req, res) => {
+router.get("/:id", (req, res) => {
     //find the position with provided id in DB
     Position.findById(req.params.id, async (err, foundPosition) => {
         if (err || !foundPosition) {
