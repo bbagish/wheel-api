@@ -29,8 +29,7 @@ router.put("/:trade_id", [auth], async (req, res) => {
             expirationDate: req.body.expirationDate,
             premium: req.body.premium,
             filledDate: req.body.filledDate,
-            closingPrice: req.body.closingPrice,
-            status: req.body.status,
+            status: req.body.status
         },
         { new: true }
     );
