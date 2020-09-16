@@ -37,7 +37,7 @@ router.put("/:trade_id", [auth], async (req, res) => {
     if (!trade) {
         return res
             .status(404)
-            .send({ msg: 'The trade with the given ID was not found.'});
+            .send({ msg: 'The trade with the given ID was not found.' });
     }
     res.send(trade);
 });
@@ -53,7 +53,7 @@ router.put("/:trade_id/close", [auth], async (req, res) => {
             filledDate: req.body.filledDate,
             closingPrice: req.body.closingPrice,
             status: req.body.status,
-            profit: (req.body.premium - req.body.closingPrice).toFixed(2)
+            profit: ((req.body.premium - req.body.closingPrice) * 100).toFixed(2)
         },
         { new: true }
     );
@@ -61,7 +61,7 @@ router.put("/:trade_id/close", [auth], async (req, res) => {
     if (!trade) {
         return res
             .status(404)
-            .send({msg: 'The trade with the given ID was not found.'});
+            .send({ msg: 'The trade with the given ID was not found.' });
     }
 
     await Position.findById(req.params.id, async (err, foundPosition) => {
@@ -70,15 +70,18 @@ router.put("/:trade_id/close", [auth], async (req, res) => {
         } else {
 
             var arr = [];
-            foundPosition.trades.forEach(trade => arr.push(trade.profit));
 
+            foundPosition.trades.forEach(trade => {
+                if(trade.profit){
+                    return arr.push(trade.profit);
+                }
+            });
             var sum = arr.reduce(function (a, b) {
                 return a + b;
             }, 0);
 
-            //console.log(sum);
             foundPosition.profit = sum;
-            foundPosition.adjustedCost = foundPosition.costBasis - (sum * 100);
+            foundPosition.adjustedCost = foundPosition.costBasis - sum;
             await foundPosition.save();
             res.send(foundPosition);
         }
@@ -100,13 +103,18 @@ router.delete("/:trade_id", [auth], async (req, res) => {
             position.trades.pull({ _id: req.params.trade_id })
             //TODO: IMPROVE ALSO CREATE A METHOD TO CALCULATE PROFIT
             var arr = [];
+
             position.trades.forEach(trade => {
-                return arr.push(trade.profit);
+                if(trade.profit){
+                    return arr.push(trade.profit);
+                }
             });
+
             var sum = arr.reduce(function (a, b) {
                 return a + b;
             }, 0);
-            position.adjustedCost = position.costBasis - (sum * 100);
+
+            position.adjustedCost = position.costBasis - sum;
             position.profit = sum;
             await position.save();
 
